@@ -1,5 +1,7 @@
 # import-react-app
 
+**WARING: You need node >= 7.10.0 to run this**!
+
 `import-react-app` is an easy way to automate the process of copying your built React App to your
 backend. Generally, this isn't a hard process; it's just inconvenient. The simplest way to solve it
 is manually, like so:

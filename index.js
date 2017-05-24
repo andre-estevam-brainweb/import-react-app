@@ -6,7 +6,7 @@ if (!process.env.ROOT_DIRECTORY) {
 	console.error("In order to do that, run:")
 	console.error(`ROOT_DIRECTORY=. ${process.argv[0]} ${process.argv[1]}`)
 	process.exit(1)
-	
+
 }
 
 const path       = require("path")
@@ -18,39 +18,6 @@ const path       = require("path")
 
 const rootDir = path.resolve(process.env.ROOT_DIRECTORY)
 const reactDir = path.join(rootDir, "import-react-app-tmp")
-let pkg
-
-try {
-
-	pkg = require(path.join(rootDir, "package.json"))
-
-} catch(e) {
-
-	console.error("You don't have a package.json file!")
-	process.exit(1)
-
-}
-
-(async () => {
-
-	if (!pkg || !pkg["import-react-app-apps"]) {
-
-		console.error("You need to have the react app repo defined in your package.json!")
-		process.exit(1)
-
-	}
-
-	for (let name in pkg["import-react-app-apps"]) {
-
-		console.log(`Importing app '${name}'...`)
-		await buildApp(name, pkg["import-react-app-apps"][name])
-		console.log("")
-
-	}
-
-	console.log("All done!")
-
-})()
 
 async function buildApp(appName, repo) {
 
@@ -233,3 +200,37 @@ const removeDir = dirPath => new Promise((resolve, reject) => {
 	})
 
 })
+
+let pkg
+
+try {
+
+	pkg = require(path.join(rootDir, "package.json"))
+
+} catch(e) {
+
+	console.error("You don't have a package.json file!")
+	process.exit(1)
+
+}
+
+(async () => {
+
+	if (!pkg || !pkg["import-react-app-apps"]) {
+
+		console.error("You need to have the react app repo defined in your package.json!")
+		process.exit(1)
+
+	}
+
+	for (let name in pkg["import-react-app-apps"]) {
+
+		console.log(`Importing app '${name}'...`)
+		await buildApp(name, pkg["import-react-app-apps"][name])
+		console.log("")
+
+	}
+
+	console.log("All done!")
+
+})()
