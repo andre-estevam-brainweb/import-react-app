@@ -47,7 +47,7 @@ script, and will copy the result to the `views` and `static` folders.
 Although this process takes a significant amount of time, it is a convenient way to do it and easy
 to integrate with your build process.
 
-# Usage
+## Usage
 
 First install the package:
 
