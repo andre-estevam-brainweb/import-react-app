@@ -1,8 +1,8 @@
 # import-react-app
 
 `import-react-app` is an easy way to automate the process of copying your built React App to your
-backend. Generally, this isn't a hard project; just inconvenient. The simplest way to solve it is
-manually, like so:
+backend. Generally, this isn't a hard process; it's just inconvenient. The simplest way to solve it
+is manually, like so:
 
 ```shell
 ~              $ ls
@@ -44,8 +44,8 @@ After you run `yarn react-import` or `npm run react-import`, `import-react-app` 
 repository on a temporary folder, install the dependencies, build the app by running the `build`
 script, and will copy the result to the `views` and `static` folders.
 
-Although this process takes a significant amount of time, it a convenient way to do it and easy to
-integrate with your build process.
+Although this process takes a significant amount of time, it is a convenient way to do it and easy
+to integrate with your build process.
 
 # Usage
 
@@ -81,11 +81,11 @@ If you want, you can add a script to your `package.json` as well:
 
 Otherwise you can run it with `node ./node_modules/import-react-app/index.js`.
 
-# Why not commit the built react app
+## Why not commit the built react app
 
 Indeed, committing it is easier, since you only need to clone the repository, and don't need an
 extra step. However, the same can be said about committing `node_modules`. It would be easier to
-simply clone, instead of cloning and install. But on larger projects it isn't right to commit it;
+simply clone, instead of cloning and installing. But on larger projects it isn't right to commit it;
 it just doesn't belong in source control.
 
 You might argue that this is just personal preference, and you'd be right. But the great thing about
