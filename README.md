@@ -32,7 +32,7 @@ backend's `package.json`:
 ```json
 {
 	"scripts": {
-		"react-import": "import-react-app"
+		"react-import": "ROOT_DIRECTORY=. import-react-app"
 	},
 	"import-react-app-apps": {
 		"myApp": "git@github.com:<your_username>/<your_react_app>.git"
@@ -74,12 +74,15 @@ If you want, you can add a script to your `package.json` as well:
 ```json
 {
 	"scripts": {
-		"react-import": "import-react-app"
+		"react-import": "ROOT_DIRECTORY=. import-react-app"
 	}
 }
 ```
 
-Otherwise you can run it with `node ./node_modules/import-react-app/index.js`.
+Otherwise you can run it with `ROOT_DIRECTORY=. node ./node_modules/import-react-app/index.js`.
+
+By doing `ROOT_DIRECTORY=.` you're telling `import-react-app` to save the app in your directory.
+Otherwise, it would default to saving inside its own directory, which you don't want.
 
 ## Why not commit the built react app
 

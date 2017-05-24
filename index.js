@@ -1,5 +1,14 @@
 "use strict"
 
+if (!process.env.ROOT_DIRECTORY) {
+
+	console.error("You need to define the ROOT_DIRECTORY environment variable to run this!")
+	console.error("In order to do that, run:")
+	console.error(`ROOT_DIRECTORY=. ${process.argv[0]} ${process.argv[1]}`)
+	process.exit(1)
+	
+}
+
 const path       = require("path")
 	, { exec }   = require("child_process")
 	, fs         = require("fs")
@@ -7,7 +16,7 @@ const path       = require("path")
 	, rimraf     = require("rimraf")
 	, simpleGit  = require("simple-git")
 
-const rootDir = path.resolve(path.dirname(require.main.filename))
+const rootDir = path.resolve(process.env.ROOT_DIRECTORY)
 const reactDir = path.join(rootDir, "import-react-app-tmp")
 let pkg
 
