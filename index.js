@@ -3,32 +3,95 @@
 const path       = require("path")
 	, { exec }   = require("child_process")
 	, fs         = require("fs")
+	, ncp        = require("ncp")
+	, rimraf     = require("rimraf")
 	, simpleGit  = require("simple-git")
 
-module.exports = async () => {
+const rootDir = path.resolve(path.dirname(require.main.filename))
+const reactDir = path.join(rootDir, "import-react-app-tmp")
+let pkg
+
+try {
+
+	pkg = require(path.join(rootDir, "package.json"))
+
+} catch(e) {
+
+	console.error("You don't have a package.json file!")
+	process.exit(1)
+
+}
+
+(async () => {
+
+	if (!pkg || !pkg["import-react-app-apps"]) {
+
+		console.error("You need to have the react app repo defined in your package.json!")
+		process.exit(1)
+
+	}
+
+	for (let name in pkg["import-react-app-apps"]) {
+
+		console.log(`Importing app '${name}'...`)
+		await buildApp(name, pkg["import-react-app-apps"][name])
+		console.log("")
+
+	}
+
+	console.log("All done!")
+
+})()
+
+async function buildApp(appName, repo) {
 
 	try {
 
-		const rootDir = path.resolve(path.dirname(require.main.filename))
-		const reactDir = path.join(rootDir, "import-react-app-tmp")
-		const pkg = require(path.join(rootDir, "package.json"))
+		if ( !( await directoryExists(path.join(rootDir, "static")) ) ) {
 
-		if (!pkg || !pkg["import-react-app-apps"] || !pkg["import-react-app-apps"][0]) {
+			await makeDir(path.join(rootDir, "static"))
 
-			console.error("You need to have the react app repo defined in your package.json!")
-			process.exit(1)
+		}
+
+		if ( !( await directoryExists(path.join(rootDir, "views")) ) ) {
+
+			await makeDir(path.join(rootDir, "views"))
 
 		}
 
 		await makeDir(reactDir)
 
-		console.log(`Cloning ${pkg["import-react-app-apps"][0]}...`)
-		await gitClone(pkg["import-react-app-apps"][0], reactDir)
+		console.log(`Cloning ${repo}...`)
+		await gitClone(repo, reactDir)
 
-		setTimeout(async () => {
-			console.log("Installing dependencies...")
-			await npmInstall(reactDir)
-		}, 5000)
+		await wait(2500)
+
+		process.chdir(reactDir)
+
+		console.log("Installing dependencies... Please wait.")
+		await execCommand("npm install")
+
+		console.log("Building the react app... Please wait.")
+		await execCommand("npm run build")
+
+		await Promise.all([
+			copy(
+				path.join(reactDir, "build/static"),
+				path.join(rootDir, "static")
+			),
+			copy(
+				path.join(reactDir, "build/favicon.ico"),
+				path.join(rootDir, "static/favicon.ico")
+			),
+			copy(
+				path.join(reactDir, "build/index.html"),
+				path.join(rootDir, `views/${appName}.html`)
+			)
+		])
+
+		await removeDir(reactDir)
+
+		console.log("Done! You can find your react-app in the folders 'static' and 'views'.")
 
 	} catch (e) {
 
@@ -39,61 +102,125 @@ module.exports = async () => {
 
 }
 
-async function makeDir(path, mode = 0o777) {
+const makeDir = (dirPath, mode = 0o777) => new Promise((resolve, reject) => {
 
-	fs.mkdir(path, mode, (err, result) => {
+	fs.mkdir(dirPath, mode, (err, result) => {
 
 		if (err) {
 
-			throw err
+			reject(err)
 
 		} else {
 
-			return result
+			resolve(result)
 
 		}
 
 	})
 
-}
+})
 
-async function gitClone(gitRepo, destinationPath, options = []) {
-
-	const git = simpleGit(destinationPath)
+const gitClone = (gitRepo, destinationPath, options = []) => new Promise((resolve, reject) => {
 
 	//noinspection JSUnresolvedFunction
-	git.clone(gitRepo, ".", options, (err, response) => {
+	simpleGit(destinationPath).clone(gitRepo, ".", options, (err, response) => {
 
 		if (err) {
 
-			throw err
+			reject(err)
 
 		} else {
 
-			return response
+			resolve(response)
 
 		}
 
 	})
 
-}
+})
 
-async function npmInstall(path) {
+const execCommand = command => new Promise((resolve, reject) => {
 
-	process.chdir(path)
-
-	exec("npm install", (err, stdOut) => {
+	exec(command, (err, stdOut) => {
 
 		if (err) {
 
-			throw err
+			reject(err)
 
 		} else {
 
-			return stdOut
+			resolve(stdOut)
 
 		}
 
 	})
 
-}
+})
+
+const wait = time => new Promise(resolve => {
+
+	setTimeout(() => resolve(), time)
+
+})
+
+const copy = (sourceDir, targetDir) => new Promise((resolve, reject) => {
+
+	ncp(sourceDir, targetDir, err => {
+
+		if (err) {
+
+			reject(err)
+
+		} else {
+
+			resolve()
+
+		}
+
+	})
+
+})
+
+const directoryExists = dirPath => new Promise((resolve, reject) => {
+
+	fs.stat(dirPath, err => {
+
+		if (err) {
+
+			if (err.code === "ENOENT") {
+
+				resolve(false)
+
+			} else {
+
+				reject(err)
+
+			}
+
+		} else {
+
+			resolve(true)
+
+		}
+
+	})
+
+})
+
+const removeDir = dirPath => new Promise((resolve, reject) => {
+
+	rimraf(dirPath, [], err => {
+
+		if (err) {
+
+			reject(err)
+
+		} else {
+
+			resolve()
+
+		}
+
+	})
+
+})

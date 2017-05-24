@@ -12,7 +12,12 @@
   "scripts": {
     "lint": "eslint index.js"
   },
+  "bin": {
+    "import-react-app": "index.js"
+  },
   "dependencies": {
+    "ncp": "^2.0.0",
+    "rimraf": "^2.6.1",
     "simple-git": "^1.73.0"
   }
 }
