@@ -19,5 +19,18 @@
     "ncp": "^2.0.0",
     "rimraf": "^2.6.1",
     "simple-git": "^1.73.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MeLlamoPablo/import-react-app.git"
+  },
+  "keywords": [
+    "import",
+    "react",
+    "app"
+  ],
+  "bugs": {
+    "url": "https://github.com/MeLlamoPablo/import-react-app/issues"
+  },
+  "homepage": "https://github.com/MeLlamoPablo/import-react-app#readme"
 }
