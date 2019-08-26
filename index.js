@@ -10,12 +10,12 @@ if (!process.env.ROOT_DIRECTORY) {
 
 }
 
-const path       = require("path")
-	, { exec }   = require("child_process")
-	, fs         = require("fs")
-	, ncp        = require("ncp")
-	, rimraf     = require("rimraf")
-	, simpleGit  = require("simple-git")
+const path = require("path")
+	, { exec } = require("child_process")
+	, fs = require("fs")
+	, ncp = require("ncp")
+	, rimraf = require("rimraf")
+	, simpleGit = require("simple-git")
 
 const rootDir = path.resolve(process.env.ROOT_DIRECTORY)
 const reactDir = path.join(rootDir, "import-react-app-tmp")
@@ -24,13 +24,13 @@ async function buildApp(appName, repo) {
 
 	try {
 
-		if ( !( await directoryExists(path.join(rootDir, "static")) ) ) {
+		if (!(await directoryExists(path.join(rootDir, "static")))) {
 
 			await makeDir(path.join(rootDir, "static"))
 
 		}
 
-		if ( !( await directoryExists(path.join(rootDir, "views")) ) ) {
+		if (!(await directoryExists(path.join(rootDir, "views")))) {
 
 			await makeDir(path.join(rootDir, "views"))
 
@@ -46,11 +46,14 @@ async function buildApp(appName, repo) {
 		process.chdir(reactDir)
 
 		console.log("Installing dependencies... Please wait.")
-		await execCommand("npm install")
+		console.log(
+			await execCommand("yarn")
+		)
 
 		console.log("Building the react app... Please wait.")
-		await execCommand("npm run build")
-
+		console.log(
+			await execCommand("yarn run build")
+		)
 		await Promise.all([
 			copy(
 				path.join(reactDir, "build/static"),
@@ -208,7 +211,7 @@ try {
 
 	pkg = require(path.join(rootDir, "package.json"))
 
-} catch(e) {
+} catch (e) {
 
 	console.error("You don't have a package.json file!")
 	process.exit(1)
